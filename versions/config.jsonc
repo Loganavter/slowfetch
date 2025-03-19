@@ -1,0 +1,237 @@
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "display": {
+        "separator": " : "
+    },
+    "modules": [
+        {
+            "type": "custom",
+            "format": "┌──────────────────────────────────────────┐"
+        },
+        {
+            "type": "command",
+            "key": " ",
+            "keyColor": "31",
+            "text": "distro=$(grep '^ID_LIKE=' /etc/os-release || grep '^ID=' /etc/os-release | cut -d '=' -f 2); name=$(grep '^NAME=' /etc/os-release | cut -d '=' -f 2 | tr -d '\"'); arch=$(uname -m); case \"$distro\" in *debian*) echo -e \"\\033[1;91m   OS\\033[0m : $name $arch\";; *fedora*) echo -e \"\\033[1;91m   OS\\033[0m : $name $arch\";; *freebsd*) echo -e \"\\033[1;91m   OS\\033[0m : $name $arch\";; *gentoo*) echo -e \"\\033[1;91m   OS\\033[0m : $name $arch\";; *nixos*) echo -e \"\\033[1;91m   OS\\033[0m : $name $arch\";; *opensuse*) echo -e \"\\033[1;91m   OS\\033[0m : $name $arch\";; *rhel*) echo -e \"\\033[1;91m  󱄛 OS\\033[0m : $name $arch\";; *arch*) echo -e \"\\033[1;91m   OS\\033[0m : $name $arch\";; *) echo -e \"\\033[1;91m   OS\\033[0m : $name $arch\";; esac"
+        },
+        {
+            "type": "kernel",
+            "key": "   Kernel",
+            "keyColor": "red"
+        },
+        {
+            "type": "packages",
+            "key": "   Packages",
+            "keyColor": "green"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "last_upgrade=$(grep -i 'full system upgrade' /var/log/pacman.log | tail -1 | awk -F'[][]' '{print $2}' | cut -d'T' -f1); if [ -z \"$last_upgrade\" ]; then exit 1; fi; days_since_upgrade=$(( ( $(date +%s) - $(date -d $last_upgrade +%s) ) / 86400 )); if [ -z \"$days_since_upgrade\" ] || [ \"$days_since_upgrade\" -eq 0 ]; then exit 1; else echo $days_since_upgrade days; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "days_since_update=$(($(date +%s) - $(stat -c %Y /var/db/pkg) 2>/dev/null) / 86400); if [ -z \"$days_since_update\" ] || [ \"$days_since_update\" -eq 0 ]; then exit 1; else echo $days_since_update days; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "last_update=$(pkg info -a -q | while read -r pkg; do pkg info -x \"$pkg\" | awk -F ': ' '/Last updated:/ {print $2}'; done | sort -u | while read -r date; do date -d \"$date\" +%s; done | awk -v now=\"$(date +%s)\" '{print (now - $1) / 86400 \" days\"}' | sort -u); if [ -z \"$last_update\" ]; then exit 1; else echo \"$last_update\"; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "date_last_update=$(nix-env --list-generations | grep '^ *[0-9]' | tail -n 1 | awk '{print $2}'); if [ -z \"$date_last_update\" ]; then exit 1; else echo $(( ( $(date +%s) - $(date -d \"$date_last_update\" +%s) ) / 86400 )) days; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "days_since_update=$(( ( $(date +%s) - $(date +%s -r /var/log/zypp/history 2>/dev/null) ) / 86400 )); if [ -z \"$days_since_update\" ] || [ \"$days_since_update\" -le 0 ]; then exit 1; else echo $days_since_update days; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "days_since_update=$(rpm -qa --qf '%{lastModification}\\n' | awk '{ cmd=\"date -d \\\"\" $1 \"\\\" +%s\"; cmd | getline mod_time; close(cmd); now=strftime(\"%s\"); print (now - mod_time) / 86400 }' | sort -n | tail -n1); if [ -z \"$days_since_update\" ] || [ \"$days_since_update\" -eq 0 ]; then exit 1; else echo $days_since_update days; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "last_update_date=$(grep 'upgrade ' /var/log/dpkg.log | tail -1 | awk '{print $1 \" \" $2}'); if [ -z \"$last_update_date\" ]; then exit 1; fi; last_update_seconds=$(date -d \"$last_update_date\" +%s); if [ -z \"$last_update_seconds\" ]; then exit 1; fi; current_seconds=$(date +%s); days_since_update=$(( (current_seconds - last_update_seconds) / 86400 )); echo $days_since_update days"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "last_update=$(find /var/log/packages -type f -exec stat -c %Y {} \\; | sort -nr | head -n 1 | awk -v now=\"$(date +%s)\" '{print int((now - $1) / 86400)}'); if [ -z \"$last_update\" ] || [ \"$last_update\" -eq 0 ]; then exit 1; else echo $last_update days; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "days_since_update=$(eopkg info --date | awk -F': ' '/^Updated on/ {print int((systime() - mktime(strptime($2, \"%Y-%m-%d %H:%M:%S\"))) / 86400) \" days\"}'); if [ -z \"$days_since_update\" ]; then exit 1; else echo $days_since_update; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "last_update=$(apk info --installed | awk '{print $1}' | while read pkg; do apk info -a \"$pkg\" | awk -F'Date: ' '/^Date:/ {print $2}'; done | date -d \"$(tail -n 1)\" +%s 2>/dev/null); if [ -z \"$last_update\" ]; then exit 1; fi; days_since_update=$(echo $(( ( $(date +%s) - $last_update ) / 86400 ))); if [ \"$days_since_update\" -eq 0 ]; then exit 1; else echo $days_since_update days; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "commit_date=$(guix pull --dry-run | grep 'latest commit:' | awk -F': ' '{print $2}'); if [ -z \"$commit_date\" ]; then exit 1; fi; days_since_update=$(( ( $(date +%s) - $(date -d \"$commit_date\" +%s) ) / 86400 )); if [ -z \"$days_since_update\" ] || [ \"$days_since_update\" -eq 0 ]; then exit 1; else echo $days_since_update days; fi"
+        },
+        {
+            "type": "command",
+            "key": "     󱚍 Last Update",
+            "keyColor": "green",
+            "text": "last_update=$(repo list -p | while read pkg; do repo info \"$pkg\" | grep 'Last modified' | awk -F': ' '{print $2}'; done | sort -r | head -n 1); if [ -z \"$last_update\" ]; then exit 1; fi; days_since_update=$(date -d \"$last_update\" +%s 2>/dev/null); if [ -z \"$days_since_update\" ]; then exit 1; fi; now=$(date +%s); echo $(( (now - days_since_update) / 86400 )) days"
+        },
+        {
+            "type": "processes",
+            "key": "      Processes",
+            "keyColor": "green"
+        },
+        {
+            "type": "display",
+            "key": "   Display",
+            "keyColor": "green"
+        },
+        {
+            "type": "command",
+            "key": "      Ori",
+            "keyColor": "blue",
+            "text": "xrandr --query | grep -w 'connected' | awk -F'[ :]+' '{print $1 \" - \" ($4 == \"left\" || $4 == \"right\" ? \"vertical\" : \"horizontal\")}' | awk '{print (NR == 1 ? \"Display \" NR-1 \" - \" $3 : \"\\033[1;38;2;85;85;255m      Ori \\033[1;0m\" \": Display \" NR-1 \" - \" $3)}'"
+        },
+        {
+            "type": "wm",
+            "key": "   WM",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "editor",
+            "key": "   Edit",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "icons",
+            "key": "   Fonts",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "terminal",
+            "key": "   Terminal",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "custom",
+            "format": "└──────────────────────────────────────────┘"
+        },
+        "break",
+        {
+            "type": "title",
+            "key": "   "
+        },
+        {
+            "type": "custom",
+            "format": "┌──────────────────────────────────────────┐"
+        },
+        {
+            "type": "cpu",
+            "format": "{1}",
+            "key": "  󱉼 CPU",
+            "keyColor": "blue"
+        },
+        {
+            "type": "gpu",
+            "format": "{2}",
+            "key": "   GPU",
+            "keyColor": "blue"
+        },
+        {
+            "type": "gpu",
+            "format": "{3}",
+            "key": "     Driver",
+            "keyColor": "cyan"
+        },
+        {
+            "type": "memory",
+            "key": "   Memory",
+            "keyColor": "magenta"
+        },      
+        {
+            "type": "command",
+            "key": "     Specs",
+            "keyColor": "red",
+            "text": "inxi -m | awk '/Device/ && !/no module installed/ {match($$0, /type: ([A-Z0-9]+[0-9]*)/, mtype); match($$0, /size: ([0-9]+) GiB/, msize); match($$0, /speed: ([0-9]+) MT\\/s/, mfreq); if (length(msize) > 0) {key = msize[1]; size[key]++; if (!type_found) {type_found = mtype[1]}; if (!speed_found && length(mfreq) > 0) {speed_found = mfreq[1]; speed[key] = mfreq[1]}}} /actual:/ {if (!speed_found) {match($$0, /actual: ([0-9]+) MT\\/s/, mactual); if (length(mactual) > 0) {speed_found = mactual[1]}}} END {split(\"\", size_arr); for (key in size) {size_arr[key] = key \"x\" size[key]}; asort(size_arr, sorted_arr, \"@val_num_desc\"); printf \"%s \", type_found; for (i in sorted_arr) printf \"%s \", sorted_arr[i]; printf \"GiB %s MHz\\n\", speed_found}'"
+        },      
+        { 
+            "type": "command",
+            "key": "  󰋊 Disk",
+            "keyColor": "magenta",
+            "text": "#!/bin/bash\n\nconvert_size() {\n    local size=$1\n    if (( size >= 1099511627776 )); then\n        echo \"$(awk \"BEGIN {printf \\\"%.2f\\\", $size/1099511627776}\") TiB\"\n    elif (( size >= 1073741824 )); then\n        echo \"$(awk \"BEGIN {printf \\\"%.2f\\\", $size/1073741824}\") GiB\"\n    elif (( size >= 1048576 )); then\n        echo \"$(awk \"BEGIN {printf \\\"%.2f\\\", $size/1048576}\") MiB\"\n    elif (( size >= 1024 )); then\n        echo \"$(awk \"BEGIN {printf \\\"%.2f\\\", $size/1024}\") KiB\"\n    else\n        echo \"$size B\"\n    fi\n}\n\nextract_vendor() {\n    local model=\"$1\"\n    local known_vendors=\"SAMSUNG|Samsung|Seagate|WDC|Western Digital|WD|HGST|Hitachi|Toshiba|SanDisk|Kingston|Intel|Crucial|Micron|SK hynix|KIOXIA\"\n    local vendor=$(echo \"$model\" | grep -oE \"^($known_vendors)[[:space:]]\" | sed 's/[[:space:]]$//')\n    if [ -z \"$vendor\" ]; then\n        if [[ \"$model\" == ST* ]]; then\n            vendor=\"Seagate\"\n        elif [[ \"$model\" == WD* ]]; then\n            vendor=\"Western Digital\"\n        elif [[ \"$model\" == MZ* || \"$model\" == MZVL* ]]; then\n            vendor=\"Samsung\"\n        elif [[ \"$model\" == SSD* ]]; then\n            vendor=\"Kingston\"\n        elif [[ \"$model\" =~ ^Samsung ]]; then\n            vendor=\"Samsung\"\n        elif [[ \"$model\" =~ ^Seagate ]]; then\n            vendor=\"Seagate\"\n        elif [[ \"$model\" =~ ^WDC ]]; then\n            vendor=\"Western Digital\"\n        elif [[ \"$model\" =~ ^HGST ]]; then\n            vendor=\"Hgst\"\n        elif [[ \"$model\" =~ ^Hitachi ]]; then\n            vendor=\"Hitachi\"\n        elif [[ \"$model\" =~ ^Toshiba ]]; then\n            vendor=\"Toshiba\"\n        elif [[ \"$model\" =~ ^SanDisk ]]; then\n            vendor=\"Sandisk\"\n        elif [[ \"$model\" =~ ^Kingston ]]; then\n            vendor=\"Kingston\"\n        elif [[ \"$model\" =~ ^Intel ]]; then\n            vendor=\"Intel\"\n        elif [[ \"$model\" =~ ^Crucial ]]; then\n            vendor=\"Crucial\"\n        elif [[ \"$model\" =~ ^Micron ]]; then\n            vendor=\"Micron\"\n        elif [[ \"$model\" =~ ^\"SK hynix\" ]]; then\n            vendor=\"Sk hynix\"\n        elif [[ \"$model\" =~ ^KIOXIA ]]; then\n            vendor=\"Kioxia\"\n        else\n            echo \"$model\" | awk '{print $1}'\n        fi\n    fi\n    if [ -z \"$vendor\" ]; then\n        vendor=$(echo \"$model\" | awk '{print $1}')\n    fi\n    echo \"$vendor\" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}'\n}\n\nCOLOR_DISK_ICON=\"\\033[1;38;2;243;84;241m\"\nCOLOR_LOW=\"\\033[1;38;2;0;255;0m\"\nCOLOR_MEDIUM=\"\\033[1;38;2;255;165;0m\"\nCOLOR_HIGH=\"\\033[1;38;2;255;85;85m\"\nCOLOR_RESET=\"\\033[0m\"\n\n# Сбор данных о дисках\ndeclare -a disk_data\nfor disk in $(lsblk -dpno NAME | grep -E '^/dev/(sd|nvme|hd|vd)'); do\n    disk_name=$(basename \"$disk\")\n    # Определение типа накопителя\n    rota=$(lsblk -d -o ROTA --noheadings \"$disk\")\n    if [ \"$rota\" = \"1\" ]; then\n        type=\"HDD\"\n    elif [[ \"$disk\" == /dev/nvme* ]]; then\n        type=\"NVMe\"\n    else\n        type=\"SSD\"\n    fi\n    \n    # Получение информации о модели\n    if [[ \"$disk\" =~ nvme ]]; then\n        model_info=$(sudo smartctl -i \"$disk\" | grep -E \"Model Number:\" | sed 's/^.*: *//')\n    else\n        model_info=$(sudo smartctl -i \"$disk\" | grep -E \"Model Family:\" | sed 's/^.*: *//')\n        [ -z \"$model_info\" ] && model_info=$(sudo smartctl -i \"$disk\" | grep -E \"Device Model:\" | sed 's/^.*: *//')\n    fi\n    \n    vendor=$(extract_vendor \"$model_info\")\n    [ -z \"$vendor\" ] && vendor=$(sudo smartctl -i \"$disk\" | grep -E \"Device Model:|Model Number:\" | sed 's/^.*: *//')\n    vendor_with_type=\"$vendor($type)\"\n    \n    # Обработка размера\n    total_size=$(convert_size $(lsblk -bno SIZE \"$disk\" | head -1))\n    \n    # Проверка монтирования\n    is_mounted=false\n    partitions=$(lsblk -lnpo NAME \"$disk\" | grep -v \"^$disk$\")\n    for part in $partitions; do\n        mount_info=$(lsblk -npo MOUNTPOINT \"$part\" | grep -v \"^$\");\n        fs_info=$(lsblk -npo FSTYPE \"$part\" | grep -v \"^$\");\n        if [ -n \"$mount_info\" ] && [ \"$mount_info\" != \"[SWAP]\" ] && [ \"$mount_info\" != \"none\" ]; then\n            is_mounted=true\n            mount_point=$mount_info\n            file_system=$fs_info\n            break\n        fi\n    done\n    \n    if $is_mounted; then\n        df_info=$(df -B1 \"$mount_point\" | tail -1)\n        used_size=$(convert_size $(echo \"$df_info\" | awk '{print $3}'))\n        usage_percent=$(echo \"$df_info\" | awk '{print $5}' | tr -d '%')\n        disk_data+=(\"mounted|$vendor_with_type|$used_size|$total_size|$usage_percent|$file_system\")\n    else\n        raw_size=$(lsblk -npo SIZE,FSTYPE \"$disk\" | grep -v \"^$disk\" | tail -1)\n        size_info=$(echo \"$raw_size\" | awk '{print $1}')\n        fs_type=$(echo \"$raw_size\" | awk '{print $2}')\n        [ -z \"$fs_type\" ] && fs_type=\"unknown\"\n        disk_data+=(\"unmounted|$vendor_with_type|$size_info|$fs_type\")\n    fi\ndone\n\n# Определение максимальной длины производителя\nmax_length=0\nfor entry in \"${disk_data[@]}\"; do\n    IFS='|' read -r status vendor rest <<< \"$entry\"\n    len=${#vendor}\n    if (( len > max_length )); then\n        max_length=$len\n    fi\ndone\n\n# Вывод с выравниванием\nfirst_disk=true\nfor entry in \"${disk_data[@]}\"; do\n    IFS='|' read -r status vendor part1 part2 part3 part4 <<< \"$entry\"\n    if [[ \"$status\" == \"mounted\" ]]; then\n        used_size=$part1\n        total_size=$part2\n        usage_percent=$part3\n        file_system=$part4\n        if (( usage_percent >= 80 )); then\n            color_perc=\"${COLOR_HIGH}${usage_percent}%${COLOR_RESET}\"\n        elif (( usage_percent >= 50 )); then\n            color_perc=\"${COLOR_MEDIUM}${usage_percent}%${COLOR_RESET}\"\n        else\n            color_perc=\"${COLOR_LOW}${usage_percent}%${COLOR_RESET}\"\n        fi\n        line=\"- ${used_size} / ${total_size} (${color_perc}) - ${file_system}\"\n    else\n        size_info=$part1\n        fs_type=$part2\n        line=\"- unmount / ${size_info} - ${fs_type}\"\n    fi\n    \n    printf -v formatted_vendor \"%-${max_length}s\" \"$vendor\"\n    if $first_disk; then\n        echo -e \"${formatted_vendor}${line}\"\n        first_disk=false\n    else\n        echo -e \"${COLOR_DISK_ICON}  󰋊 Disk${COLOR_RESET} : ${formatted_vendor}${line}\"\n    fi\ndone"
+        },
+        {
+            "type": "command",
+            "key": "  󰍽 Mouse",
+            "keyColor": "yellow",
+            "text": "lsusb | grep $(udevadm info --query=all --name=/dev/input/mouse0 | grep 'ID_USB_MODEL_ID' | awk -F= '{print $2}') | awk '{print substr($0, index($0,$7))}' | awk -F', ' '{print $1}'"
+        },
+        {
+            "type": "board",
+            "key": "  󱐁 Board",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "command",
+            "key": "  󱦟 OS Age ",
+            "keyColor": "31",
+            "text": "birth_install=$(stat -c %W /); current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days"
+        },
+        {
+            "type": "uptime",
+            "key": "  󱫐 Uptime ",
+            "keyColor": "red"
+        },
+        {
+            "type": "custom",
+            "format": "└──────────────────────────────────────────┘"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "┌──────────────────────────────────────────┐"
+        },
+        {
+            "type": "command",
+            "key": "  󰇧 Browser",
+            "keyColor": "green",
+            "text": "#!/bin/bash\n\ndeclare -A browsers=([firefox]=\"Firefox\" [chrome]=\"Google Chrome\" [chromium]=\"Chromium\" [opera]=\"Opera\" [edge]=\"Microsoft Edge\" [brave]=\"Brave\" [safari]=\"Safari\" [tor]=\"Tor Browser\" [vivaldi]=\"Vivaldi\" [yandex]=\"Yandex Browser\" [maxthon]=\"Maxthon\" [pale]=\"Pale Moon\" [waterfox]=\"Waterfox\" [floorp]=\"Floorp\")\n\nprocesses=$(pgrep -x 'firefox|chrome|chromium|opera|edge|brave|safari|tor|vivaldi|yandex|maxthon|pale|waterfox|floorp' | xargs -I{} ps -p {} -o comm= 2>/dev/null | sort -u)\n\n[ -z \"$processes\" ] && { [ -n \"$BROWSER\" ] && basename \"$BROWSER\" | sed 's/.*/\\L\\u&/; s/_/ /g' | tr -s ' ' || echo \"No browser found\"; } && exit 0\n\necho \"$processes\" | while read -r proc; do key=$(echo \"$proc\" | tr '[:upper:]' '[:lower:]'); if [[ -n ${browsers[$key]} ]]; then echo \"${browsers[$key]}\"; else echo \"$proc\" | sed 's/.*/\\L\\u&/; s/_/ /g' | tr -s ' '; fi; done | sort -u"
+        },
+        {
+            "type": "command",
+            "key": "   Play",
+            "text": "play_info=$(playerctl metadata --format '{{artist}} - {{title}} ({{status}})'); if [ -z \"$play_info\" ]; then echo 'No media'; else echo \"$play_info\"; fi"
+        },
+        {
+            "type": "command",
+            "key": " ",
+            "text": "play_info=$(playerctl metadata --format '{{artist}} - {{title}} ({{status}})'); if [ -z \"$play_info\" ]; then echo \" Play : No media\" | awk '{len=length($0)+7; min_len=34; total_len=(len>min_len?len:min_len); if (total_len > 34) total_len -= 5; line=\"\"; for (i=1; i<=total_len; i++) line=line\"─\"; print \"└\" line \"┘\"}'; else echo \" Play : $play_info\" | awk '{len=length($0)+7; min_len=34; total_len=(len>min_len?len:min_len); if (total_len > 34) total_len -= 5; line=\"\"; for (i=1; i<=total_len; i++) line=line\"─\"; print \"└\" line \"┘\"}'; fi"
+        },
+        {
+            "type": "colors",
+            "paddingLeft": 2,
+            "symbol": "circle"
+        },
+        "break"
+    ]
+}

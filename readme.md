@@ -32,7 +32,7 @@
 
 **slowfetch** is not a standalone fetch program, but a comprehensive configuration layer built on top of the incredibly fast and versatile [fastfetch](https://github.com/fastfetch-cli/fastfetch). It provides a curated collection of powerful shell scripts and a beautiful default theme, all managed by an interactive command-line utility.
 
-The goal is to provide a visually appealing and highly informative fetch experience out-of-the-box, while giving you an easy way to customize every aspect of it. Please note that some dynamic metrics, such as internet speed or current CPU frequency, are estimates and may not always be perfectly accurate.
+The goal is to provide a visually appealing and highly informative fetch experience out-of-the-box, while giving you an easy way to customize every aspect of it. Please note that some dynamic metrics, such as internet speed or current CPU frequency, are estimates and may not always be perfectly accurate. The average fetch execution time is ~4-5 seconds, with a cache of ~1 second.
 
 ---
 

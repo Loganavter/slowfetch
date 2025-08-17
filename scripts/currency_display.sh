@@ -7,7 +7,6 @@ RESET_COLOR="\033[0m"
 
 INDENT="  "
 
-# Определение языка для сообщений об ошибках
 if [[ "$LANG" =~ ^ru ]]; then
     SCRIPT_ERROR_MSG="Ошибка скрипта"
 else

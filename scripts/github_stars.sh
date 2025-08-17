@@ -2,7 +2,6 @@
 
 ICON=""
 
-# Определение языка для сообщений об ошибках
 if [[ "$LANG" =~ ^ru ]]; then
     ERROR_GH_JQ_REQUIRED="Ошибка: требуется gh или jq"
     ERROR_NOT_LOGGED_IN="Ошибка: не авторизован в gh"
@@ -15,7 +14,7 @@ fi
 
 CACHE_DIR="$HOME/.cache/fastfetch"
 CACHE_FILE="$CACHE_DIR/github_stars.cache"
-CACHE_DURATION_SECONDS=$((30 * 60)) # 15 минут * 60 секунд
+CACHE_DURATION_SECONDS=$((30 * 60))
 
 mkdir -p "$CACHE_DIR"
 

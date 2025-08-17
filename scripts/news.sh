@@ -2,7 +2,6 @@
 
 ICON=""
 
-# Определение языка для сообщений об ошибках
 if [[ "$LANG" =~ ^ru ]]; then
     ERROR_CURL_REQUIRED="требуется curl"
     ERROR_ICONV_REQUIRED="iconv требуется для opennet"

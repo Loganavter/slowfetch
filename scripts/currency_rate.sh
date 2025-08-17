@@ -2,7 +2,6 @@
 
 ICON=""
 
-# Определение языка для сообщений об ошибках
 if [[ "$LANG" =~ ^ru ]]; then
     ERROR_CURL_XMLSTARLET_REQUIRED="требуется curl/xmlstarlet"
     ERROR_BC_REQUIRED="bc требуется для ECB"

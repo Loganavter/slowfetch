@@ -2,7 +2,6 @@
 
 ICON="󰒍"
 
-# Определение языка для сообщений об ошибках
 if [[ "$LANG" =~ ^ru ]]; then
     ERROR_CURL_NOT_FOUND="curl не найден"
     ERROR_TEST_FAILED="Тест не удался"

@@ -1,0 +1,220 @@
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "display": {
+    "separator": " : "
+  },
+  "modules": [
+    {
+      "type": "command",
+      "key": " ",
+      "text": "$HOME/.config/fastfetch/scripts/holy_name.sh"
+    },
+    {
+      "type": "command",
+      "key": " ",
+      "text": "$HOME/.config/fastfetch/scripts/blessed_by_divine.sh"
+    },
+    {
+      "type": "custom",
+      "format": "┌──────────────────────────────────────────┐"
+    },
+    {
+      "type": "command",
+      "key": " ",
+      "keyColor": "31",
+      "text": "$HOME/.config/fastfetch/scripts/os_info.sh"
+    },
+    {
+      "type": "kernel",
+      "key": "   Kernel",
+      "keyColor": "red"
+    },
+    {
+      "type": "packages",
+      "key": "   Packages",
+      "keyColor": "green"
+    },
+    {
+      "type": "command",
+      "key": "     󱚍 Last Update",
+      "keyColor": "green",
+      "text": "$HOME/.config/fastfetch/scripts/last_update.sh"
+    },
+    {
+      "type": "processes",
+      "key": "      Processes",
+      "keyColor": "green"
+    },
+    {
+      "type": "command",
+      "key": "      Github Stars",
+      "keyColor": "green",
+      "text": "$HOME/.config/fastfetch/scripts/github_stars.sh"
+    },
+    {
+      "type": "display",
+      "key": "   Display",
+      "keyColor": "green"
+    },
+    {
+      "type": "command",
+      "key": " ",
+      "keyColor": "blue",
+      "text": "$HOME/.config/fastfetch/scripts/ori_info.sh"
+    },
+    {
+      "type": "wm",
+      "key": "   WM",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "editor",
+      "key": "   Edit",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "icons",
+      "key": "   Fonts",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "terminal",
+      "key": "   Terminal",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "custom",
+      "format": "└──────────────────────────────────────────┘"
+    },
+    "break",
+    {
+      "type": "title",
+      "key": "   "
+    },
+    {
+      "type": "custom",
+      "format": "┌──────────────────────────────────────────┐"
+    },
+    {
+      "type": "cpu",
+      "format": "{1}",
+      "key": "  󱉼 CPU",
+      "keyColor": "blue"
+    },
+    {
+      "type": "cpu",
+      "format": "{6}",
+      "key": "     Clock",
+      "keyColor": "1;38;2;70;110;180"
+    },
+    {
+      "type": "gpu",
+      "format": "{2}",
+      "key": "   GPU",
+      "keyColor": "blue"
+    },
+    {
+      "type": "command",
+      "key": "     VRAM",
+      "keyColor": "1;38;2;70;110;180",
+      "text": "$HOME/.config/fastfetch/scripts/vram_info.sh"
+    },
+    {
+      "type": "memory",
+      "key": "   Memory",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "command",
+      "key": " ",
+      "text": "$HOME/.config/fastfetch/scripts/swap_info.sh"
+    },
+    {
+      "type": "command",
+      "key": " ",
+      "text": "$HOME/.config/fastfetch/scripts/ram_specs.sh"
+    },
+    {
+      "type": "command",
+      "key": "  󰋊 Disk",
+      "keyColor": "magenta",
+      "text": "$HOME/.config/fastfetch/scripts/disk_info.sh"
+    },
+    {
+      "type": "command",
+      "key": "  󰍽 Mouse",
+      "keyColor": "yellow",
+      "text": "$HOME/.config/fastfetch/scripts/mouse_info.sh"
+    },
+    {
+      "type": "board",
+      "key": "  󱐁 Board",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "command",
+      "key": "  󱦟 OS Age ",
+      "keyColor": "red",
+      "text": "$HOME/.config/fastfetch/scripts/os_age.sh"
+    },
+    {
+      "type": "uptime",
+      "key": "  󱫐 Uptime ",
+      "keyColor": "red"
+    },
+    {
+      "type": "custom",
+      "format": "└──────────────────────────────────────────┘"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "┌──────────────────────────────────────────┐"
+    },
+    {
+      "type": "command",
+      "key": " ",
+      "keyColor": "green",
+      "text": "$HOME/.config/fastfetch/scripts/currency_display.sh"
+    },
+    {
+      "type": "command",
+      "key": "  󰇧 Browser",
+      "keyColor": "green",
+      "text": "$HOME/.config/fastfetch/scripts/browser_info.sh"
+    },
+    {
+      "type": "command",
+      "key": "  󰒍 D Speed",
+      "keyColor": "green",
+      "text": "$HOME/.config/fastfetch/scripts/network_speed.sh"
+    },
+    {
+      "type": "command",
+      "key": "   News",
+      "keyColor": "green",
+      "text": "$HOME/.config/fastfetch/scripts/news.sh"
+    },
+    {
+      "type": "command",
+      "key": " ",
+      "text": "$HOME/.config/fastfetch/scripts/media_art.sh"
+    },
+    {
+      "type": "command",
+      "key": "   Play",
+      "text": "$HOME/.config/fastfetch/scripts/media_info.sh"
+    },
+    {
+      "type": "command",
+      "key": " ",
+      "text": "$HOME/.config/fastfetch/scripts/media_underline.sh"
+    },
+    {
+      "type": "colors",
+      "paddingLeft": 2,
+      "symbol": "circle"
+    },
+    "break"
+  ]
+}

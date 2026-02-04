@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON=""
 
@@ -27,11 +27,21 @@ if [ -f "$CACHE_FILE" ]; then
         cache_age=$((current_time - cached_timestamp))
 
         if [ "$cache_age" -lt "$CACHE_DURATION_SECONDS" ]; then
-            echo "$cached_stars"
+            if [ "$cached_stars" -eq 0 ]; then
+                exit 1
+            fi
+            COLOR_KEY="\033[1;32m"
+            COLOR_RESET="\033[0m"
+            KEY="${COLOR_KEY}     ${ICON} Github Stars${COLOR_RESET}"
+            echo -e "${KEY} : ${cached_stars}"
             exit 0
         fi
     fi
 fi
+
+COLOR_KEY="\033[1;32m"
+COLOR_RESET="\033[0m"
+KEY="${COLOR_KEY}     ${ICON} Github Stars${COLOR_RESET}"
 
 fetch_new_data() {
     if ! command -v gh &>/dev/null || ! command -v jq &>/dev/null; then
@@ -44,11 +54,6 @@ fetch_new_data() {
     fi
 
     local REPOS=(
-        "Loganavter/Improve-ImgSLI"
-        "Loganavter/media_archive"
-        "Loganavter/slowfetch"
-        "Loganavter/Denoise-Compact"
-        "Loganavter/VobSub-Index-File-Fast-Editor"
     )
     local total_stars=0
 
@@ -64,12 +69,20 @@ fetch_new_data() {
 new_total_stars=$(fetch_new_data)
 
 if [[ "$new_total_stars" =~ ^[0-9]+$ ]]; then
+    if [ "$new_total_stars" -eq 0 ]; then
+        printf "%s\n%s" "$(date +%s)" "$new_total_stars" >"$CACHE_FILE"
+        exit 1
+    fi
     printf "%s\n%s" "$(date +%s)" "$new_total_stars" >"$CACHE_FILE"
-    echo "$new_total_stars"
+    echo -e "${KEY} : ${new_total_stars}"
 else
     if [ -f "$CACHE_FILE" ] && [[ "$(tail -n 1 "$CACHE_FILE")" =~ ^[0-9]+$ ]]; then
-        tail -n 1 "$CACHE_FILE"
+        cached_stars=$(tail -n 1 "$CACHE_FILE")
+        if [ "$cached_stars" -eq 0 ]; then
+            exit 1
+        fi
+        echo -e "${KEY} : ${cached_stars}"
     else
-        echo "$ERROR_MSG"
+        echo -e "${KEY} : ${ERROR_MSG}"
     fi
 fi

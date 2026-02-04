@@ -36,7 +36,7 @@
     },
     {
       "type": "command",
-      "key": "     󱚍 Last Update",
+      "key": " ",
       "keyColor": "green",
       "text": "$HOME/.config/fastfetch/scripts/last_update.sh"
     },
@@ -47,7 +47,7 @@
     },
     {
       "type": "command",
-      "key": "      Github Stars",
+      "key": " ",
       "keyColor": "green",
       "text": "$HOME/.config/fastfetch/scripts/github_stars.sh"
     },
@@ -115,7 +115,7 @@
     },
     {
       "type": "command",
-      "key": "     VRAM",
+      "key": " ",
       "keyColor": "1;38;2;70;110;180",
       "text": "$HOME/.config/fastfetch/scripts/vram_info.sh"
     },
@@ -136,13 +136,13 @@
     },
     {
       "type": "command",
-      "key": "  󰋊 Disk",
+      "key": " ",
       "keyColor": "magenta",
       "text": "$HOME/.config/fastfetch/scripts/disk_info.sh"
     },
     {
       "type": "command",
-      "key": "  󰍽 Mouse",
+      "key": " ",
       "keyColor": "yellow",
       "text": "$HOME/.config/fastfetch/scripts/mouse_info.sh"
     },
@@ -153,7 +153,7 @@
     },
     {
       "type": "command",
-      "key": "  󱦟 OS Age ",
+      "key": " ",
       "keyColor": "red",
       "text": "$HOME/.config/fastfetch/scripts/os_age.sh"
     },
@@ -179,19 +179,19 @@
     },
     {
       "type": "command",
-      "key": "  󰇧 Browser",
+      "key": " ",
       "keyColor": "green",
       "text": "$HOME/.config/fastfetch/scripts/browser_info.sh"
     },
     {
       "type": "command",
-      "key": "  󰒍 D Speed",
+      "key": " ",
       "keyColor": "green",
       "text": "$HOME/.config/fastfetch/scripts/network_speed.sh"
     },
     {
       "type": "command",
-      "key": "   News",
+      "key": " ",
       "keyColor": "green",
       "text": "$HOME/.config/fastfetch/scripts/news.sh"
     },
@@ -202,7 +202,7 @@
     },
     {
       "type": "command",
-      "key": "   Play",
+      "key": " ",
       "text": "$HOME/.config/fastfetch/scripts/media_info.sh"
     },
     {

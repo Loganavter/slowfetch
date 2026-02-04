@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON=""
 
-COLOR_LOW="\033[0;38;2;19;160;13m"
-COLOR_MEDIUM="\033[0;38;2;255;255;85m"
-COLOR_HIGH="\033[0;38;2;255;85;85m"
+COLOR_LOW="\033[1;38;2;19;160;13m"
+COLOR_MEDIUM="\033[1;38;2;255;255;85m"
+COLOR_HIGH="\033[1;38;2;255;85;85m"
 COLOR_RESET="\033[0m"
 
 used_mib=""
@@ -49,4 +49,6 @@ else
     color="$COLOR_LOW"
 fi
 
-echo -e "${used_gib} GiB / ${total_gib} GiB (${color}${memory_percent}%${COLOR_RESET})"
+COLOR_KEY="\033[1;38;2;70;110;180m"
+KEY="${COLOR_KEY}    ${ICON} VRAM${COLOR_RESET}"
+echo -e "${KEY} : ${used_gib} GiB / ${total_gib} GiB (${color}${memory_percent}%${COLOR_RESET})"

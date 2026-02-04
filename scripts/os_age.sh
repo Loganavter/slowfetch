@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON="󱦟"
 
@@ -36,6 +36,10 @@ if [ ! -d / ]; then
     exit 1
 fi
 
+COLOR_KEY="\033[1;31m"
+COLOR_RESET="\033[0m"
+KEY="${COLOR_KEY}  ${ICON} OS Age ${COLOR_RESET}"
+
 birth_install=$(stat -c %W /)
 if ! [[ "$birth_install" =~ ^[0-9]+$ ]]; then
     exit 1
@@ -44,4 +48,5 @@ fi
 current=$(date +%s)
 time_progression=$((current - birth_install))
 
-format_duration "$time_progression"
+result=$(format_duration "$time_progression")
+echo -e "${KEY}: ${result}"

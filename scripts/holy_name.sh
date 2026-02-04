@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON="✞"
 
@@ -19,7 +19,7 @@ case $distro in
 *) holy_name=$distro ;;
 esac
 
-COLOR_GOLD="\033[0;38;2;255;215;0m"
+COLOR_GOLD="\033[1;38;2;255;215;0m"
 COLOR_GOLD_BOLD="\033[1;38;2;255;215;0m"
 COLOR_RESET="\033[0m"
 

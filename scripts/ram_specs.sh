@@ -1,51 +1,71 @@
-#!/bin/bash
-
-ICON=""
+#!/usr/bin/env bash
 
 if ! command -v inxi &>/dev/null; then
+    echo "Ошибка: inxi не установлен."
     exit 1
 fi
 
-COLOR_TITLE="\033[0;38;2;170;130;255m"
+ICON=""
+COLOR_TITLE="\033[1;38;2;170;130;255m"
 COLOR_RESET="\033[0m"
 
-inxi -m | awk '
-/Device/ && !/no module installed/ {
-    match($0, /type: ([A-Z0-9]+[0-9]*)/, mtype);
-    match($0, /size: ([0-9]+) GiB/, msize);
-    match($0, /speed: ([0-9]+) MT\/s/, mfreq);
-    if (length(msize) > 0) {
-        key = msize[1];
-        size[key]++;
-        if (!type_found) { type_found = mtype[1] };
-        if (!speed_found && length(mfreq) > 0) { speed_found = mfreq[1] };
-    }
-}
-/actual:/ {
-    if (!speed_found) {
-        match($0, /actual: ([0-9]+) MT\/s/, mactual);
-        if (length(mactual) > 0) { speed_found = mactual[1] };
-    }
-}
-END {
-    if (!type_found) exit 1;
-    
-    split("", size_arr);
-    for (key in size) {
-        size_arr[key] = key "x" size[key];
-    }
-    asort(size_arr, sorted_arr, "@val_num_desc");
-    
-    size_string = "";
-    for (i in sorted_arr) {
-        size_string = size_string sorted_arr[i] " ";
-    }
-    
-    printf "%s     Specs %s: %s %sGiB %.2f GHz\n",
-        "\033[0;38;2;170;130;255m",
-        "\033[0m",
-        type_found,
-        size_string,
-        (speed_found ? speed_found / 1000 : 0)
-}
-'
+declare -A size_count_map
+type_found=""
+min_freq=0
+
+while read -r line; do
+    [[ "$line" =~ Device-[0-9]+ ]] || continue
+    [[ "$line" =~ "no module installed" ]] && continue
+
+    if [[ "$line" =~ type:[[:space:]]*([^[:space:]]+) ]]; then
+        t="${BASH_REMATCH[1]}"
+        [[ "$t" != "N/A" && -z "$type_found" ]] && type_found="$t"
+    fi
+
+    if [[ "$line" =~ size:[[:space:]]*([0-9.]+)[[:space:]]*(GiB|GB|MiB|MB) ]]; then
+        val="${BASH_REMATCH[1]}"
+        unit="${BASH_REMATCH[2]}"
+
+        if [[ "$unit" =~ M ]]; then
+            val=$(awk -v v="$val" 'BEGIN {printf "%.0f", v/1024}')
+        else
+            val=$(awk -v v="$val" 'BEGIN {printf "%.0f", v}')
+        fi
+
+        if [[ "$val" -gt 0 ]]; then
+            size_count_map[$val]=$((size_count_map[$val] + 1))
+        fi
+    fi
+
+    current_freq=0
+    if [[ "$line" =~ (actual|configured):[[:space:]]*([0-9]+) ]]; then
+        current_freq="${BASH_REMATCH[2]}"
+    elif [[ "$line" =~ speed:[[:space:]]*(spec:[[:space:]]*)?([0-9]+) ]]; then
+        current_freq="${BASH_REMATCH[2]}"
+    fi
+
+    if [[ "$current_freq" -gt 0 ]]; then
+        if [[ "$min_freq" -eq 0 ]] || [[ "$current_freq" -lt "$min_freq" ]]; then
+            min_freq="$current_freq"
+        fi
+    fi
+done < <(inxi -m -y 1000 2>/dev/null)
+
+formatted_size=""
+if [ ${#size_count_map[@]} -gt 0 ]; then
+    IFS=$'\n' sorted_keys=($(sort -rn <<<"${!size_count_map[*]}"))
+    unset IFS
+    for s in "${sorted_keys[@]}"; do
+        formatted_size+="${s}x${size_count_map[$s]} "
+    done
+fi
+
+type_out=${type_found:-"RAM"}
+size_out=${formatted_size:-"N/A "}
+freq_ghz="0.00 GHz"
+
+if [[ "$min_freq" -gt 0 ]]; then
+    freq_ghz=$(awk -v s="$min_freq" 'BEGIN {printf "%.2f GHz", s/1000}')
+fi
+
+echo -e "${COLOR_TITLE}    ${ICON} Specs ${COLOR_RESET}: ${type_out} ${size_out}GiB ${freq_ghz}"

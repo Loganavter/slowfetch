@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON=""
 
@@ -30,38 +30,45 @@ if ! command -v curl &>/dev/null; then
     exit 1
 fi
 
+COLOR_KEY="\033[1;32m"
+COLOR_RESET="\033[0m"
+KEY="${COLOR_KEY}  ${ICON} News${COLOR_RESET}"
+
 case "$SOURCE" in
 opennet)
     if ! command -v iconv &>/dev/null; then
-        echo "$ERROR_ICONV_REQUIRED"
+        echo -e "${KEY} : ${ERROR_ICONV_REQUIRED}"
         exit 1
     fi
-    curl -s 'https://www.opennet.ru/opennews/' |
+    news_title=$(curl -s 'https://www.opennet.ru/opennews/' |
         iconv -f KOI8-R -t UTF-8 |
         grep -m 1 -oE '<a href="/opennews/art.shtml\?num=[0-9]+" class=title2>[^<]+</a>' |
-        sed -E 's/.*>([^<]+)<.*/\1/'
+        sed -E 's/.*>([^<]+)<.*/\1/')
+    echo -e "${KEY} : ${news_title}"
     ;;
 
 phoronix)
     if ! command -v xmlstarlet &>/dev/null; then
-        echo "$ERROR_XMLSTARLET_REQUIRED_PHORONIX"
+        echo -e "${KEY} : ${ERROR_XMLSTARLET_REQUIRED_PHORONIX}"
         exit 1
     fi
-    curl -s "https://www.phoronix.com/rss.php" |
-        xmlstarlet sel -t -v "//item[1]/title" -n
+    news_title=$(curl -s "https://www.phoronix.com/rss.php" |
+        xmlstarlet sel -t -v "//item[1]/title" -n)
+    echo -e "${KEY} : ${news_title}"
     ;;
 
 lwn)
     if ! command -v xmlstarlet &>/dev/null; then
-        echo "$ERROR_XMLSTARLET_REQUIRED_LWN"
+        echo -e "${KEY} : ${ERROR_XMLSTARLET_REQUIRED_LWN}"
         exit 1
     fi
-    curl -s "https://lwn.net/headlines/rss" |
-        xmlstarlet sel -t -v "//item[1]/title" -n
+    news_title=$(curl -s "https://lwn.net/headlines/rss" |
+        xmlstarlet sel -t -v "//item[1]/title" -n)
+    echo -e "${KEY} : ${news_title}"
     ;;
 
 *)
-    echo "$ERROR_UNKNOWN_SOURCE"
+    echo -e "${KEY} : ${ERROR_UNKNOWN_SOURCE}"
     exit 1
     ;;
 esac

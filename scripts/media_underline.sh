@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON="-"
 
@@ -14,6 +14,7 @@ else
 fi
 
 char_count=$(printf "%s" "$full_display_string" | wc -m)
+((char_count--))
 
 min_len=42
 if ((char_count < min_len)); then

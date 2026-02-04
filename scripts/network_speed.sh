@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON="󰒍"
 
@@ -10,7 +10,7 @@ else
     ERROR_TEST_FAILED="Test failed"
 fi
 
-TEST_FILE_URL="https://cachefly.cachefly.net/10mb.test"
+TEST_FILE_URL="https://speed.cloudflare.com/__down?bytes=10000000"
 ROUND_TO=50
 
 if ! command -v curl &>/dev/null; then
@@ -34,5 +34,8 @@ rounded_multiple=$(awk -v speed="$speed_mbits_per_sec" -v round_to="$ROUND_TO" '
 rounded_speed=$((rounded_multiple * ROUND_TO))
 
 result_string="~${rounded_speed} Mbit/s"
+COLOR_KEY="\033[1;32m"
+COLOR_RESET="\033[0m"
+KEY="${COLOR_KEY}  ${ICON} D Speed${COLOR_RESET}"
 
-echo "$result_string"
+echo -e "${KEY} : ${result_string}"

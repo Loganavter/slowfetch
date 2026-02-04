@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON=""
 
@@ -9,7 +9,7 @@ arch=$(uname -m)
 
 distro_check="${distro_like:-$distro_id}"
 
-COLOR_RED="\033[0;91m"
+COLOR_RED="\033[1;91m"
 COLOR_RESET="\033[0m"
 
 ICON_DEBIAN=""

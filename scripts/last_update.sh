@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ICON="󱚍"
 
@@ -47,14 +47,21 @@ process_timestamp() {
     fi
 
     format_duration "$diff"
-    exit 0
+    return 0
 }
+
+COLOR_KEY="\033[1;32m"
+COLOR_RESET="\033[0m"
+KEY="${COLOR_KEY}     ${ICON} Last Update${COLOR_RESET}"
 
 if command -v pacman &>/dev/null; then
     last_upgrade_str=$(grep -i 'full system upgrade' /var/log/pacman.log | tail -1 | awk -F'[][]' '{print $2}')
     if [ -n "$last_upgrade_str" ]; then
         timestamp=$(date -d "$(echo "$last_upgrade_str" | cut -d'T' -f1)" +%s 2>/dev/null)
-        process_timestamp "$timestamp"
+        if result=$(process_timestamp "$timestamp"); then
+            echo -e "${KEY} : ${result}"
+            exit 0
+        fi
     fi
 fi
 
@@ -62,31 +69,46 @@ if command -v dpkg &>/dev/null; then
     last_upgrade_str=$(grep 'upgrade ' /var/log/dpkg.log | tail -1 | awk '{print $1 " " $2}')
     if [ -n "$last_upgrade_str" ]; then
         timestamp=$(date -d "$last_upgrade_str" +%s 2>/dev/null)
-        process_timestamp "$timestamp"
+        if result=$(process_timestamp "$timestamp"); then
+            echo -e "${KEY} : ${result}"
+            exit 0
+        fi
     fi
 fi
 
 if command -v dnf &>/dev/null; then
     timestamp=$(rpm -qa --qf '%{installtime}\n' | sort -n | tail -1)
-    process_timestamp "$timestamp"
+    if result=$(process_timestamp "$timestamp"); then
+        echo -e "${KEY} : ${result}"
+        exit 0
+    fi
 fi
 
 if command -v nix-env &>/dev/null; then
     date_str=$(nix-env --list-generations | grep '^ *[0-9]' | tail -n 1 | awk '{print $2}')
     if [ -n "$date_str" ]; then
         timestamp=$(date -d "$date_str" +%s 2>/dev/null)
-        process_timestamp "$timestamp"
+        if result=$(process_timestamp "$timestamp"); then
+            echo -e "${KEY} : ${result}"
+            exit 0
+        fi
     fi
 fi
 
 if command -v zypper &>/dev/null && [ -f /var/log/zypp/history ]; then
     timestamp=$(stat -c %Y /var/log/zypp/history)
-    process_timestamp "$timestamp"
+    if result=$(process_timestamp "$timestamp"); then
+        echo -e "${KEY} : ${result}"
+        exit 0
+    fi
 fi
 
 if command -v pkg &>/dev/null && [ -d /var/db/pkg ]; then
     timestamp=$(stat -c %Y /var/db/pkg)
-    process_timestamp "$timestamp"
+    if result=$(process_timestamp "$timestamp"); then
+        echo -e "${KEY} : ${result}"
+        exit 0
+    fi
 fi
 
 exit 1

@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>A highly customizable configuration layer and TUI manager for Fastfetch with 20+ custom scripts.</strong>
+  <strong>A highly customizable configuration layer and TUI manager for Fastfetch with 20 custom scripts.</strong>
 </p>
 
 ---

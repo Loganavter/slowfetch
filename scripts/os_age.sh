@@ -40,7 +40,28 @@ COLOR_KEY="\033[1;31m"
 COLOR_RESET="\033[0m"
 KEY="${COLOR_KEY}  ${ICON} OS Age ${COLOR_RESET}"
 
-birth_install=$(stat -c %W /)
+birth_install=$(stat -c %W / 2>/dev/null)
+
+if [[ "$birth_install" == "-" ]] || [[ "$birth_install" == "0" ]]; then
+    birth_install=0
+fi
+
+if [ "$birth_install" -eq 0 ]; then
+    if command -v rpm >/dev/null; then
+        birth_install=$(rpm -q --qf "%{INSTALLTIME}\n" filesystem 2>/dev/null)
+    fi
+    
+    if [ -z "$birth_install" ] || [ "$birth_install" -eq 0 ]; then
+        if [ -d /lost+found ]; then
+            birth_install=$(stat -c %Y /lost+found 2>/dev/null)
+        fi
+    fi
+    
+    if [ -z "$birth_install" ] || [ "$birth_install" -eq 0 ]; then
+        birth_install=$(stat -c %Y /etc/fstab 2>/dev/null)
+    fi
+fi
+
 if ! [[ "$birth_install" =~ ^[0-9]+$ ]]; then
     exit 1
 fi

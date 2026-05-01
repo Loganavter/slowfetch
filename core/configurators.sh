@@ -132,8 +132,14 @@ configure_module() {
 
 configure_github_stars() {
     eval "$(get_paths)"
-    local script_path="${SCRIPTS_PATH}/github_stars.sh"
+    local repo_file
     local tmp_sel=$(mktemp)
+
+    if [ -f "$INSTALLED_FLAG" ]; then
+        repo_file="${CONFIG_DIR}/github_stars.repos"
+    else
+        repo_file="${PROJECT_ROOT}/github_stars.repos"
+    fi
 
     while true; do
         clear
@@ -188,14 +194,10 @@ configure_github_stars() {
         return
     fi
 
-    local new_repos="    local REPOS=(\n"
-    while read -r line; do
-        new_repos+="        \"$line\"\n"
-    done <"$tmp_sel"
-    new_repos+="    )"
+    mkdir -p "$(dirname "$repo_file")"
+    cp "$tmp_sel" "$repo_file"
     rm -f "$tmp_sel"
 
-    sed -i.bak -e "/local REPOS=(/,/)/c\\$new_repos" "$script_path"
     rm -f "$HOME/.cache/fastfetch/github_stars.cache"
 
     echo -e "${FG_GREEN}${L_SUCCESS_GH_STARS_CONFIGURED}${RESET}"

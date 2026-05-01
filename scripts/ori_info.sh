@@ -47,17 +47,46 @@ get_gnome_xml() {
     if [[ ! -f "$xml_file" ]]; then return 1; fi
 
     awk -v kc="$KEY_COLOR" -v rc="$RESET_COLOR" -v ks="$KEY_STRING" '
-    BEGIN { idx=0; conf=0; logi=0; found=0 }
-    /<configuration>/ { if (conf == 0) conf = 1 }
-    /<\/configuration>/ { if (conf == 1) exit }
-    conf && /<logicalmonitor>/ { logi=1; rot="normal" }
-    logi && /<rotation>/ { gsub(/.*<rotation>|<\/rotation>.*/, "", $0); rot=$0 }
-    logi && /<\/logicalmonitor>/ {
-        ori = (rot == "left" || rot == "right") ? "vertical" : "horizontal"
-        print kc ks rc " : Display " idx " - " ori
-        idx++; logi=0; found=1
+    BEGIN {
+        in_conf=0; in_logi=0; found=0
+        best_count=0; cur_count=0
+        best_lines=""; cur_lines=""
     }
-    END { if (found == 0) exit 1 }' "$xml_file"
+    /<configuration>/ {
+        in_conf=1
+        cur_count=0
+        cur_lines=""
+        next
+    }
+    /<\/configuration>/ {
+        if (in_conf && cur_count >= best_count) {
+            best_count=cur_count
+            best_lines=cur_lines
+        }
+        in_conf=0
+        next
+    }
+    in_conf && /<logicalmonitor>/ {
+        in_logi=1
+        rot="normal"
+        next
+    }
+    in_logi && /<rotation>/ {
+        gsub(/.*<rotation>|<\/rotation>.*/, "", $0)
+        rot=$0
+        next
+    }
+    in_logi && /<\/logicalmonitor>/ {
+        ori = (rot == "left" || rot == "right") ? "vertical" : "horizontal"
+        cur_lines = cur_lines kc ks rc " : Display " cur_count " - " ori "\n"
+        cur_count++
+        in_logi=0
+        found=1
+    }
+    END {
+        if (!found || best_count == 0) exit 1
+        printf "%s", best_lines
+    }' "$xml_file"
 }
 
 get_xrandr() {
